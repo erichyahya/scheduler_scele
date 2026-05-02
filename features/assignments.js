@@ -18,23 +18,22 @@ function parseActivities(html, course) {
             name = cleanText(clone.textContent);
         }
 
-        let dueText = '';
-        let closedText = '';
+        let deadline = '';
+        let deadlineLabel = '';
         const dateRegion = li.querySelector('[data-region="activity-dates"]');
         if (dateRegion) {
             const divs = dateRegion.querySelectorAll('div');
             for (const d of divs) {
                 const txt = d.textContent.trim();
-                if (txt.startsWith('Due:')) {
-                    dueText = txt.replace(/^Due:\s*/, '').trim();
-                } else if (/^Closed?s?:/.test(txt)) {
-                    closedText = txt.replace(/^Closed?s?:\s*/, '').trim();
-                }
+                const m = txt.match(/^([^:]+):\s*(.+)$/);
+                if (!m) continue;
+                const label = m[1].trim();
+                if (/^Opened?s?$/i.test(label)) continue;
+                deadlineLabel = label;
+                deadline = m[2].trim();
             }
         }
 
-        const deadline = dueText || closedText;
-        const deadlineLabel = dueText ? 'Due' : closedText ? 'Closes' : '';
         const deadlineMs = deadline ? parseMoodleDate(deadline) : null;
 
         items.push({
