@@ -4,7 +4,38 @@
 
 SCELE Summary is a browser tool that improves the SCELE e-learning platform (https://scele.cs.ui.ac.id), a Moodle-based LMS used by Fakultas Ilmu Komputer, Universitas Indonesia. The tool scrapes course pages and presents assignments, quizzes, announcements, and forum discussions in a unified dashboard.
 
-Currently implemented as a Tampermonkey userscript (`scele-summary.user.js`). The plan is to convert it into a Chrome extension with multi-file structure for better maintainability and distribution.
+Implemented as a Chrome extension (Manifest V3) at the repo root. The legacy Tampermonkey userscript (`scele-summary.user.js`) is kept as a fallback but the extension is the primary form.
+
+## File Structure (current)
+
+```
+manifest.json           -- MV3 manifest, host permissions for scele.cs.ui.ac.id
+
+content/
+  content.js            -- content script: injects 📋 Summary button on SCELE pages
+  content.css           -- styles for the injected button
+
+dashboard/
+  dashboard.html        -- standalone dashboard page (loads all scripts)
+  dashboard.js          -- shell: bootstrap, status bar, course picker, parseCourses, back button
+  dashboard.css         -- all dashboard styles
+
+features/               -- one file per feature, owns its scrape + render + UI logic
+  assignments.js        -- parseActivities, detectStatus, enrichStatus, render table, fetch-all
+  announcements.js      -- general-forums scraper + table render
+  forums.js             -- learning-forums scraper + cards render + reply detection
+
+lib/                    -- shared helpers used by 2+ features
+  dates.js              -- parseMoodleDate, parseShortDate, formatDate, deadlineClass
+  http.js               -- fetchText (credentials-included fetch wrapper)
+  html.js               -- parseHtml, cleanText, escapeHtml, escapeAttr, shortenCourse
+  forum-parser.js       -- parseForumDiscussions, parseForumsByCategory (shared by announcements + forums)
+  storage.js            -- loadSelected, saveSelected (localStorage)
+```
+
+The architecture is hybrid: layer-based for shared helpers (`lib/`), feature-based for everything user-visible (`features/`). New features (Grades, Calendar Export, etc.) go in `features/`; only extract to `lib/` once a second feature needs the same code.
+
+Scripts are loaded via plain `<script>` tags in `dashboard.html` — no ES modules. Load order: `lib/*` → `features/*` → `dashboard.js`. All functions live in shared global scope.
 
 ## Owners
 
@@ -25,7 +56,7 @@ Yahya Muhandar Fathana and Auriel Erich Ibrahim
 - Fetches each selected course page (`/course/view.php?id={courseId}`)
 - Scrapes `li.activity.assign` and `li.activity.quiz` elements
 - Extracts name from `.instancename` (excluding `.accesshide` spans)
-- Extracts deadlines from `[data-region="activity-dates"]` divs, looking for "Due:" and "Closed:" prefixes
+- Extracts deadlines from `[data-region="activity-dates"]` divs, matching `Due:`, `Closed:` (past), and `Closes:` (future). Moodle uses present tense for upcoming dates and past tense once they pass — both must be handled or upcoming quizzes show no deadline.
 - Date parsing handles format: "Saturday, 14 February 2026, 11:55 PM"
 - Sorted by deadline, newest first
 - Status optimization: items with past deadlines are marked "Past" immediately (zero fetches). Only upcoming items get individual page fetches to check submission status.
@@ -73,42 +104,18 @@ Assignment/quiz dates use a different format: "Saturday, 14 February 2026, 11:55
 ### User ID Detection
 To check forum reply status, the script needs the current user's ID. It fetches the homepage and looks for `/user/profile.php?id=(\d+)` in the HTML, or `"userid"\s*:\s*(\d+)` in inline scripts.
 
-## Chrome Extension Conversion Plan
+## Extension Manifest Notes
 
-### Target File Structure
-```
-scele-summary/
-  manifest.json
-  icons/
-    icon-16.png
-    icon-48.png
-    icon-128.png
-  content/
-    content.js           -- content script: injects Summary button on SCELE pages
-    content.css          -- styles for the injected button
-  dashboard/
-    dashboard.html       -- standalone dashboard page
-    dashboard.js         -- main dashboard logic, UI rendering
-    dashboard.css        -- dashboard styles
-  lib/
-    parsers.js           -- HTML parsing functions (courses, activities, forums, discussions)
-    scraper.js           -- fetch utilities, status enrichment, reply detection
-    storage.js           -- localStorage helpers for course selection
-    dates.js             -- date parsing utilities
-```
-
-### manifest.json Key Points
 - `manifest_version: 3`
-- `permissions: ["cookies"]` (to access SCELE session)
-- `host_permissions: ["https://scele.cs.ui.ac.id/*"]` (only SCELE, nothing else)
-- `content_scripts`: inject button on `scele.cs.ui.ac.id` pages
+- `host_permissions: ["https://scele.cs.ui.ac.id/*"]` (only SCELE, nothing else). No `cookies` permission needed — `fetch(..., {credentials: 'include'})` from the dashboard page automatically attaches the SCELE session cookie because of host_permissions.
+- `content_scripts` injects the Summary button on `scele.cs.ui.ac.id` pages
 - Dashboard page opened via `chrome.runtime.getURL('dashboard/dashboard.html')`
+- `web_accessible_resources` exposes `dashboard/dashboard.html` to SCELE pages so the content script can open it
+- No icons committed yet — Chrome falls back to the default puzzle-piece icon. Drop PNGs into `icons/` and add an `"icons"` field to manifest.json to brand it.
 
-### Migration Notes
-- The Summary button click should use `chrome.runtime.getURL()` to open dashboard.html instead of the current `#scele-summary` hash approach
-- CSS should move from inline JS strings to proper .css files
-- All scraping logic stays the same, just reorganized into modules
-- `fetch()` with `credentials: 'include'` should still work from the extension's dashboard page since it has host_permissions for SCELE
+## Loading the Extension
+
+chrome://extensions → enable Developer mode → "Load unpacked" → select the repo root. Reload the extension after pulling changes.
 
 ## URL Patterns Reference
 
@@ -127,9 +134,9 @@ scele-summary/
 ## Roadmap
 
 ### Short Term
-- Convert to Chrome extension
 - Test with a small group of students at Fasilkom UI
 - Polish UI/UX based on feedback
+- Add extension icons
 
 ### Medium Term
 - Grade overview feature
