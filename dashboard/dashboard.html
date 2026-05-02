@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SCELE Summary</title>
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+    <div class="container">
+        <h1>📋 SCELE Summary</h1>
+        <div class="subtitle">All your assignments and quizzes, sorted by deadline</div>
+        <div class="status-bar" id="status">
+            <div class="spinner"></div>
+            <span id="status-text">Fetching your courses…</span>
+        </div>
+        <div id="content"></div>
+    </div>
+
+    <script src="../lib/dates.js"></script>
+    <script src="../lib/storage.js"></script>
+    <script src="../lib/parsers.js"></script>
+    <script src="../lib/scraper.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html>

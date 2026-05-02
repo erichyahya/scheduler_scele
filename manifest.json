@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "SCELE Summary",
+  "version": "0.4.0",
+  "description": "Notion-style dashboard for SCELE: assignments, quizzes, announcements, and forums.",
+  "host_permissions": ["https://scele.cs.ui.ac.id/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://scele.cs.ui.ac.id/*"],
+      "js": ["content/content.js"],
+      "css": ["content/content.css"],
+      "run_at": "document_end"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["dashboard/dashboard.html"],
+      "matches": ["https://scele.cs.ui.ac.id/*"]
+    }
+  ],
+  "action": {
+    "default_title": "Open SCELE Summary"
+  }
+}

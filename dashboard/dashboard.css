@@ -1,0 +1,262 @@
+* { box-sizing: border-box; }
+html, body {
+    margin: 0;
+    background: #fafafa;
+}
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+    color: #1f2937;
+}
+.container { max-width: 1200px; margin: 0 auto; padding: 40px 32px; }
+h1 { font-size: 28px; font-weight: 700; margin: 0 0 4px; }
+.subtitle { color: #6b7280; font-size: 14px; margin-bottom: 24px; }
+.status-bar {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: #4b5563;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.spinner {
+    width: 14px; height: 14px;
+    border: 2px solid #e5e7eb;
+    border-top-color: #2563eb;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    font-size: 13px;
+}
+thead { background: #f9fafb; }
+th {
+    text-align: left;
+    padding: 10px 14px;
+    font-weight: 600;
+    color: #6b7280;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid #e5e7eb;
+}
+td {
+    padding: 12px 14px;
+    border-bottom: 1px solid #f1f3f5;
+    vertical-align: top;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #fafbfc; }
+.pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+}
+.pill-assign { background: #fef3c7; color: #92400e; }
+.pill-quiz { background: #ddd6fe; color: #5b21b6; }
+.pill-done { background: #d1fae5; color: #065f46; }
+.pill-notdone { background: #fee2e2; color: #991b1b; }
+.pill-pastdue { background: #f3f4f6; color: #6b7280; }
+.pill-loading { background: #f3f4f6; color: #9ca3af; }
+.deadline-soon { color: #dc2626; font-weight: 600; }
+.deadline-week { color: #d97706; }
+.deadline-far { color: #4b5563; }
+.deadline-past { color: #9ca3af; text-decoration: line-through; }
+a.row-link {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+}
+a.row-link:hover { text-decoration: underline; }
+.course-name {
+    color: #6b7280;
+    font-size: 12px;
+}
+.empty {
+    text-align: center;
+    padding: 40px;
+    color: #9ca3af;
+}
+.error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+.toolbar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 12px;
+    gap: 8px;
+}
+.btn-fetch-all {
+    background: white;
+    border: 1px solid #d1d5db;
+    color: #4b5563;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.btn-fetch-all:hover { background: #f9fafb; }
+.btn-fetch-all:disabled { color: #9ca3af; cursor: not-allowed; }
+.pill-past { background: #f3f4f6; color: #6b7280; }
+
+.picker-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+}
+.picker-card h2 {
+    font-size: 18px; font-weight: 600; margin: 0 0 6px;
+}
+.picker-card p { color: #6b7280; font-size: 13px; margin: 0 0 16px; }
+.picker-toolbar {
+    display: flex; gap: 8px; margin-bottom: 12px;
+    padding-bottom: 12px; border-bottom: 1px solid #f1f3f5;
+    flex-wrap: wrap;
+}
+.btn-link {
+    background: none; border: none; color: #2563eb;
+    font-size: 13px; cursor: pointer; padding: 4px 8px;
+    border-radius: 4px; font-weight: 500;
+}
+.btn-link:hover { background: #eff6ff; }
+.course-group { margin-bottom: 14px; }
+.course-group-title {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.06em; color: #9ca3af; margin-bottom: 8px;
+    padding: 0 4px;
+}
+.course-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px; border-radius: 6px; cursor: pointer;
+    transition: background 0.1s;
+}
+.course-item:hover { background: #f9fafb; }
+.course-item input[type="checkbox"] {
+    width: 16px; height: 16px; cursor: pointer; accent-color: #2563eb;
+}
+.course-item-name { font-size: 13px; flex: 1; }
+.course-item-id { font-size: 11px; color: #9ca3af; }
+
+.feature-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding-top: 16px;
+    border-top: 1px solid #f1f3f5;
+    margin-top: 8px;
+}
+.feature-buttons-3 { grid-template-columns: 1fr 1fr 1fr; }
+.feature-btn {
+    background: #2563eb; color: white; border: none;
+    padding: 16px 20px; border-radius: 8px;
+    font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: background 0.15s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.feature-btn:hover { background: #1d4ed8; }
+.feature-btn.secondary { background: #7c3aed; }
+.feature-btn.secondary:hover { background: #6d28d9; }
+.feature-btn.tertiary { background: #059669; }
+.feature-btn.tertiary:hover { background: #047857; }
+
+.forum-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    margin-bottom: 14px;
+    overflow: hidden;
+}
+.forum-card-header {
+    padding: 14px 18px;
+    background: #fafbfc;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+.forum-card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0;
+}
+.forum-card-meta {
+    font-size: 11px;
+    color: #6b7280;
+    margin-top: 2px;
+}
+.forum-card-course {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #2563eb;
+    background: #eff6ff;
+    padding: 3px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+}
+.forum-card-empty {
+    padding: 18px;
+    color: #9ca3af;
+    font-size: 13px;
+    font-style: italic;
+}
+.discussion-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 18px;
+    border-bottom: 1px solid #f1f3f5;
+    font-size: 13px;
+}
+.discussion-row:last-child { border-bottom: none; }
+.discussion-row:hover { background: #fafbfc; }
+.discussion-title {
+    flex: 1;
+    min-width: 0;
+}
+.discussion-title a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+}
+.discussion-title a:hover { text-decoration: underline; }
+.discussion-meta {
+    color: #6b7280;
+    font-size: 11px;
+    margin-top: 2px;
+}
+.pill-replied { background: #d1fae5; color: #065f46; }
+.pill-notreplied { background: #fef3c7; color: #92400e; }
+.pill-unchecked { background: #f3f4f6; color: #9ca3af; }
+
+.btn-back {
+    background: white; border: 1px solid #d1d5db;
+    color: #4b5563; padding: 6px 12px;
+    border-radius: 6px; font-size: 13px;
+    cursor: pointer; font-weight: 500;
+}
+.btn-back:hover { background: #f9fafb; }

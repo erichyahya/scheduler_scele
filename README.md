@@ -8,7 +8,7 @@ Forums: learning forum discussions with reply detection
 Course picker: select which courses to include, remembers your selection
 Fast loading: only checks status for upcoming items, skips past deadlines
 
-Installation
+## Installation
 
 Install Tampermonkey (or Violentmonkey) in your browser
 Create a new userscript
@@ -18,9 +18,9 @@ Save and visit https://scele.cs.ui.ac.id
 ## Install
 [Click here to install](https://raw.githubusercontent.com/yourusername/my-userscript/main/my-script.user.js)
 
-Privacy
+## Privacy
 This script runs entirely in your browser. No data is sent to any external server. All requests go only to scele.cs.ui.ac.id using your existing login session.
-License
+## License
 MIT License
 Copyright (c) 2026 Yahya Muhandar Fathana and Auriel Erich Ibrahim
 Permission is hereby granted, free of charge, to any person obtaining a copy
