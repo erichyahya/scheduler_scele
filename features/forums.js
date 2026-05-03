@@ -26,8 +26,10 @@ function detectUserReplied(html, userId) {
 }
 
 async function runForumsScraper(courses) {
+    const signal = startFetchSession();
     const content = document.getElementById('content');
-    content.innerHTML = '';
+    content.innerHTML = `<div class="toolbar" style="justify-content: space-between">${backButtonHtml()}<div></div></div>`;
+    wireBackButton();
     setStatus(`Fetching forum index for ${courses.length} courses…`, true);
 
     const forumIndexes = await Promise.all(
@@ -38,6 +40,7 @@ async function runForumsScraper(courses) {
             )
         )
     );
+    if (signal.aborted) return;
 
     const learningForums = [];
     for (const { course, html } of forumIndexes) {
@@ -71,6 +74,7 @@ async function runForumsScraper(courses) {
             )
         )
     );
+    if (signal.aborted) return;
 
     const forumsWithDiscussions = [];
     for (const f of forumPages) {

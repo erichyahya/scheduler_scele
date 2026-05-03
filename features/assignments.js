@@ -114,8 +114,10 @@ async function enrichStatus(items, onUpdate) {
 }
 
 async function runAssignmentsScraper(courses) {
+    const signal = startFetchSession();
     const content = document.getElementById('content');
-    content.innerHTML = '';
+    content.innerHTML = `<div class="toolbar" style="justify-content: space-between">${backButtonHtml()}<div></div></div>`;
+    wireBackButton();
     setStatus(`Fetching ${courses.length} course pages…`, true);
 
     const allItems = [];
@@ -127,6 +129,7 @@ async function runAssignmentsScraper(courses) {
             )
         )
     );
+    if (signal.aborted) return;
 
     for (const { course, html } of coursePages) {
         if (!html) continue;
@@ -156,6 +159,7 @@ async function runAssignmentsScraper(courses) {
         setStatus(`Checking status for ${upcomingItems.length} upcoming items…`, true);
         await enrichStatus(upcomingItems, updateAssignmentRow);
     }
+    if (signal.aborted) return;
     setStatus(`Done. ${allItems.length} items.`, false);
 
     window.__sceleAllItems = allItems;

@@ -48,7 +48,7 @@ Yahya Muhandar Fathana and Auriel Erich Ibrahim
 - Courses are found via `.block_navigation a[href*="/course/view.php?id="]` inside `li.type_course` elements
 - Grouped by category prefix (e.g. `[Reg]`, `[SI.Reg]`) extracted from course titles
 - Quick buttons: Select all, Clear, Select current semester
-- Selection saved to localStorage under key `scele-summary-selected-courses`
+- Selection saved to localStorage under key `scele-summary-selected-courses` (theme preference uses `scele-summary-theme`)
 - Three feature buttons below: Assignments & Quizzes, Announcements, Forums
 - Fetching only starts after user picks courses AND clicks a feature button
 
@@ -56,7 +56,7 @@ Yahya Muhandar Fathana and Auriel Erich Ibrahim
 - Fetches each selected course page (`/course/view.php?id={courseId}`)
 - Scrapes `li.activity.assign` and `li.activity.quiz` elements
 - Extracts name from `.instancename` (excluding `.accesshide` spans)
-- Extracts deadlines from `[data-region="activity-dates"]` divs, matching `Due:`, `Closed:` (past), and `Closes:` (future). Moodle uses present tense for upcoming dates and past tense once they pass — both must be handled or upcoming quizzes show no deadline.
+- Extracts deadlines from `[data-region="activity-dates"]` divs using a **position-based** approach: walks every `<div>` in the region, skips any whose label matches `Opened`/`Opens`, takes the **last remaining** date as the deadline (with whatever label Moodle shows — `Due`, `Closes`, `Closed`, `Cut-off date`, etc.). This is more robust than keyword matching: handles Moodle's tense changes (`Closed:` past → `Closes:` future) and any future label additions automatically. Pattern observed across all courses: 1 date = it's the deadline; 2 dates = first is `Opened`, second is the deadline.
 - Date parsing handles format: "Saturday, 14 February 2026, 11:55 PM"
 - Sorted by deadline, newest first
 - Status optimization: items with past deadlines are marked "Past" immediately (zero fetches). Only upcoming items get individual page fetches to check submission status.
@@ -82,6 +82,13 @@ Yahya Muhandar Fathana and Auriel Erich Ibrahim
 - "Check my replies" button: detects current user ID from homepage (`/user/profile.php?id=` pattern), then fetches each discussion page and counts occurrences of the user's profile link. 2+ occurrences = replied (1 occurrence is just the navbar).
 - Concurrency of 4 for reply checking
 
+### 5. Dark Mode
+- Toggle button (🌙/☀️) fixed at top-right of the dashboard, visible on every view, stays put while scrolling
+- GitHub-style palette: bg `#0d1117`, cards `#161b22`, blue accent `#2f81f7`, off-white text `#c9d1d9`. Pills use desaturated dark variants (e.g. `pill-done` becomes `#103021` bg / `#4ade80` text) so they don't glow on dark backgrounds.
+- Implemented via CSS variables: `:root` defines light theme, `html.dark` overrides them. Toggling adds/removes `dark` class on `<html>` (not `<body>`) so variables cascade to both.
+- Preference persisted to localStorage under key `scele-summary-theme` (`light` / `dark`).
+- Pre-paint flash prevention: small inline `<script>` in `<head>` reads localStorage and adds `preload-dark` class before CSS loads, paired with a minimal inline style to set the dark bg immediately.
+
 ## Critical Technical Details
 
 ### Relative URLs
@@ -103,6 +110,15 @@ Assignment/quiz dates use a different format: "Saturday, 14 February 2026, 11:55
 
 ### User ID Detection
 To check forum reply status, the script needs the current user's ID. It fetches the homepage and looks for `/user/profile.php?id=(\d+)` in the HTML, or `"userid"\s*:\s*(\d+)` in inline scripts.
+
+### Fetch Cancellation (AbortController)
+`lib/http.js` keeps a module-level `AbortController` whose signal is passed to every `fetch()` call inside `fetchText()`. Two functions are exposed:
+- `startFetchSession()` — aborts the current controller, creates a fresh one, returns the new signal. Called at the start of every scraper (`runAssignmentsScraper`, `runAnnouncementsScraper`, `runForumsScraper`) and by the back button.
+- The signal it returns is captured by the scraper as `const signal = startFetchSession();`. After every `await` (Promise.all of fetches, enrichStatus, etc.) the scraper checks `if (signal.aborted) return;` and bails silently. **Without these checks, a stale scraper would resolve after the user navigated away and clobber the new UI** (e.g. an empty assignments table replacing the course picker).
+- Aborted fetches reject with `AbortError`, but existing per-fetch `.then(html, () => null)` handlers swallow these silently — no console spam, just `html === null` which the post-processing loops skip.
+
+### UX: Instant Back Button
+Each scraper renders the back-button toolbar immediately (before fetches start) so users can navigate away during long loads. The button works even while data is still being fetched. Combined with fetch cancellation above, clicking back during a load aborts in-flight requests and returns to the picker with no flicker or stale rendering.
 
 ## Extension Manifest Notes
 

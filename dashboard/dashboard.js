@@ -192,5 +192,9 @@ function backButtonHtml() {
 
 function wireBackButton() {
     const b = document.getElementById('back-btn');
-    if (b) b.onclick = () => showCoursePicker(_allCourses);
+    if (b) b.onclick = () => {
+        startFetchSession();
+        setStatus('', false);
+        showCoursePicker(_allCourses);
+    };
 }

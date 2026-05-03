@@ -1,6 +1,8 @@
 async function runAnnouncementsScraper(courses) {
+    const signal = startFetchSession();
     const content = document.getElementById('content');
-    content.innerHTML = '';
+    content.innerHTML = `<div class="toolbar" style="justify-content: space-between">${backButtonHtml()}<div></div></div>`;
+    wireBackButton();
     setStatus(`Fetching forum index for ${courses.length} courses…`, true);
 
     const forumIndexes = await Promise.all(
@@ -11,6 +13,7 @@ async function runAnnouncementsScraper(courses) {
             )
         )
     );
+    if (signal.aborted) return;
 
     const generalForums = [];
     for (const { course, html } of forumIndexes) {
@@ -44,6 +47,7 @@ async function runAnnouncementsScraper(courses) {
             )
         )
     );
+    if (signal.aborted) return;
 
     const allPosts = [];
     for (const f of forumPages) {
