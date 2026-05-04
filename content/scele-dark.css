@@ -177,16 +177,29 @@ html.scele-dark tbody tr:hover {
     background-color: var(--sd-surface-2) !important;
 }
 
-/* Forms */
-html.scele-dark input,
+/* Forms — use the darkest surface (--sd-bg) so inputs read as recessed slots
+   against any cell/card/striped row above them. Earlier we used --sd-surface-2
+   which collided with striped table rows, making empty inputs invisible. */
+html.scele-dark input[type="text"],
+html.scele-dark input[type="number"],
+html.scele-dark input[type="email"],
+html.scele-dark input[type="password"],
+html.scele-dark input[type="search"],
+html.scele-dark input[type="tel"],
+html.scele-dark input[type="url"],
+html.scele-dark input:not([type]),
 html.scele-dark textarea,
 html.scele-dark select,
 html.scele-dark .form-control,
 html.scele-dark .custom-select,
 html.scele-dark .form-select {
-    background-color: var(--sd-surface-2) !important;
+    background-color: var(--sd-bg) !important;
     color: var(--sd-text) !important;
-    border-color: var(--sd-border) !important;
+    border: 1px solid var(--sd-border) !important;
+}
+html.scele-dark option {
+    background-color: var(--sd-surface) !important;
+    color: var(--sd-text) !important;
 }
 html.scele-dark input::placeholder,
 html.scele-dark textarea::placeholder {
@@ -320,6 +333,39 @@ html.scele-dark .alert-danger,
 html.scele-dark .alert-error { border-left: 3px solid var(--sd-danger) !important; }
 html.scele-dark .alert-warning { border-left: 3px solid #d29922 !important; }
 html.scele-dark .alert-info { border-left: 3px solid var(--sd-accent) !important; }
+
+/* Text selection */
+html.scele-dark ::selection {
+    background-color: rgba(47, 129, 247, 0.4) !important;
+    color: var(--sd-text) !important;
+}
+
+/* Author-applied highlights/marks. Moodle's Atto editor lets lecturers wrap
+   text in <mark>, <span style="background-color:...">, etc. Those colors are
+   chosen for a light page, so on dark they end up as light bg + light text =
+   invisible. Replace with a soft amber tint that keeps the "highlighted" cue
+   while staying readable. */
+html.scele-dark mark,
+html.scele-dark .highlight,
+html.scele-dark [style*="background-color:"],
+html.scele-dark [style*="background:"] {
+    background-color: rgba(251, 191, 36, 0.18) !important;
+    color: var(--sd-text) !important;
+    border-radius: 2px;
+}
+
+/* Author-applied text colors. Pick the darkest of the matched cases: a
+   <span style="color: black"> on a dark page is invisible. Force everything
+   inline-colored back to the readable light text. We lose the original
+   accent color, but readability beats author intent in dark mode. The
+   selectors avoid matching `background-color:` by requiring `color:` to
+   appear at the start of the style or after a `;`. */
+html.scele-dark [style^="color:"],
+html.scele-dark [style*=";color:"],
+html.scele-dark [style*="; color:"],
+html.scele-dark font[color] {
+    color: var(--sd-text) !important;
+}
 
 /* Floating theme toggle (injected by scele-dark.js) */
 #scele-theme-toggle {
