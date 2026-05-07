@@ -163,7 +163,9 @@ function showCoursePicker(allCourses) {
             <aside class="donate-card">
                 <h3>Support development</h3>
                 <p>If this tool saves you time, consider buying us a coffee. it keeps the project alive.</p>
-                <div class="donate-qr" aria-label="Donation QR code placeholder">QR</div>
+                <div class="donate-qr">
+                    <img src="../assets/qr-scele-scheduler.png" alt="SCELE Scheduler donation QR code">
+                </div>
                 <a class="donate-link" href="#" target="_blank" rel="noopener">your-donation-link.com</a>
             </aside>
         </div>

@@ -262,6 +262,16 @@ a.row-link:hover { text-decoration: underline; }
     font-size: 12px;
     letter-spacing: 0.2em;
     margin-bottom: 12px;
+    overflow: hidden;
+}
+.donate-qr img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #fff;
+    border-radius: 6px;
+    padding: 8px;
 }
 .donate-link {
     display: block;
