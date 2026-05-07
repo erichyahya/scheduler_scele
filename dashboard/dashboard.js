@@ -166,7 +166,7 @@ function showCoursePicker(allCourses) {
                 <div class="donate-qr">
                     <img src="../assets/qr-scele-scheduler.png" alt="SCELE Scheduler donation QR code">
                 </div>
-                <a class="donate-link" href="#" target="_blank" rel="noopener">your-donation-link.com</a>
+                <a class="donate-link" href="https://forms.gle/UJaNtpmsQi3QZHwm9" target="_blank" rel="noopener">Send feedback</a>
             </aside>
         </div>
     `;
