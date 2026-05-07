@@ -5,6 +5,11 @@
   "description": "Notion-style dashboard for SCELE: assignments, quizzes, announcements, and forums.",
   "permissions": ["storage"],
   "host_permissions": ["https://scele.cs.ui.ac.id/*"],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
   "content_scripts": [
     {
       "matches": ["https://scele.cs.ui.ac.id/*"],
@@ -26,6 +31,11 @@
     }
   ],
   "action": {
-    "default_title": "Open SCELE Summary"
+    "default_title": "Open SCELE Summary",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
   }
 }

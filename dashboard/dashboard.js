@@ -162,7 +162,7 @@ function showCoursePicker(allCourses) {
             </div>
             <aside class="donate-card">
                 <h3>Support development</h3>
-                <p>If this tool saves you time, consider buying us a coffee. it keeps the project alive.</p>
+                <p>Dibuat dengan ❤️ oleh sesama mahasiswa buat kalian. Kalau tools ini bikin kuliahmu sedikit lebih ringan, secangkir kopi dari kamu bisa jadi bahan bakar kami untuk terus berkarya ☕✨</p>
                 <div class="donate-qr">
                     <img src="../assets/qr-scele-scheduler.png" alt="SCELE Scheduler donation QR code">
                 </div>
