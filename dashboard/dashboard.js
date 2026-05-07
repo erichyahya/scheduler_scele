@@ -111,6 +111,8 @@ function parseCourses(html) {
 function showCoursePicker(allCourses) {
     const saved = loadSelected();
     const groups = groupCoursesByCategory(allCourses);
+    const COLLAPSE_LIMIT = 6;
+    const needsCollapse = allCourses.length > COLLAPSE_LIMIT;
 
     const groupHtml = Object.entries(groups)
         .map(([groupName, courses]) => {
@@ -128,29 +130,53 @@ function showCoursePicker(allCourses) {
             return `
                 <div class="course-group">
                     <div class="course-group-title">${escapeHtml(groupName)}</div>
-                    ${items}
+                    <div class="course-grid">${items}</div>
                 </div>`;
         })
         .join('');
 
+    const seeMoreBtn = needsCollapse
+        ? `<button class="btn-see-more" id="see-more">See more</button>`
+        : '';
+
     const content = document.getElementById('content');
     content.innerHTML = `
-        <div class="picker-card">
-            <h2>Pick courses</h2>
-            <p>Found ${allCourses.length} courses. Select which ones to summarize, then choose a feature below. Your selection will be remembered.</p>
-            <div class="picker-toolbar">
-                <button class="btn-link" id="select-all">Select all</button>
-                <button class="btn-link" id="select-none">Clear</button>
-                <button class="btn-link" id="select-current">Select current semester</button>
+        <div class="picker-layout">
+            <div class="picker-main">
+                <div class="picker-card">
+                    <h2>Pick courses</h2>
+                    <p>Found ${allCourses.length} courses. Select which ones to summarize, then choose a feature below. Your selection will be remembered.</p>
+                    <div class="picker-toolbar">
+                        <button class="btn-link" id="select-all">Select all</button>
+                        <button class="btn-link" id="select-none">Clear</button>
+                        <button class="btn-link" id="select-current">Select current semester</button>
+                    </div>
+                    <div class="course-list ${needsCollapse ? 'collapsed' : ''}">${groupHtml}</div>
+                    ${seeMoreBtn ? `<div class="see-more-row">${seeMoreBtn}</div>` : ''}
+                </div>
+                <div class="feature-buttons feature-buttons-3">
+                    <button class="feature-btn" id="feat-assign">📋 Assignments &amp; Quizzes</button>
+                    <button class="feature-btn secondary" id="feat-announce">📢 Announcements</button>
+                    <button class="feature-btn tertiary" id="feat-forums">📚 Forums</button>
+                </div>
             </div>
-            ${groupHtml}
-            <div class="feature-buttons feature-buttons-3">
-                <button class="feature-btn" id="feat-assign">📋 Assignments &amp; Quizzes</button>
-                <button class="feature-btn secondary" id="feat-announce">📢 Announcements</button>
-                <button class="feature-btn tertiary" id="feat-forums">📚 Forums</button>
-            </div>
+            <aside class="donate-card">
+                <h3>Support development</h3>
+                <p>If this tool saves you time, consider buying us a coffee. it keeps the project alive.</p>
+                <div class="donate-qr" aria-label="Donation QR code placeholder">QR</div>
+                <a class="donate-link" href="#" target="_blank" rel="noopener">your-donation-link.com</a>
+            </aside>
         </div>
     `;
+
+    const seeMoreEl = document.getElementById('see-more');
+    if (seeMoreEl) {
+        seeMoreEl.onclick = () => {
+            const list = content.querySelector('.course-list');
+            const expanded = list.classList.toggle('collapsed') === false;
+            seeMoreEl.textContent = expanded ? 'See less' : 'See more';
+        };
+    }
 
     const checkboxes = () => content.querySelectorAll('.course-checkbox');
     document.getElementById('select-all').onclick = () =>
